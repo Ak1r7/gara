@@ -1,21 +1,24 @@
 <?php
-include '../config/database.php';
+require_once '../config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nume = $_POST['nume'];
-    $email = $_POST['email'];
+    $nume = filter_input(INPUT_POST, 'nume', FILTER_SANITIZE_STRING);
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
     $parola = password_hash($_POST['parola'], PASSWORD_DEFAULT);
-    $telefon = $_POST['telefon'];
-
+    
     try {
-        $stmt = $pdo->prepare("INSERT INTO users (nume, email, parola, telefon) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$nume, $email, $parola, $telefon]);
-        header("Location: login.php?success=1");
+        $stmt = $pdo->prepare("INSERT INTO users (nume, email, parola) VALUES (?, ?, ?)");
+        $stmt->execute([$nume, $email, $parola]);
+        
+        $_SESSION['user_id'] = $pdo->lastInsertId();
+        $_SESSION['nume'] = $nume;
+        header("Location: /gara/public/index.php");
     } catch (PDOException $e) {
-        $error = "Eroare la înregistrare: " . $e->getMessage();
+        $error = "Eroare înregistrare: " . $e->getMessage();
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="ro">

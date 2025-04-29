@@ -13,6 +13,7 @@ $is_public = strpos($_SERVER['REQUEST_URI'], 'public/') !== false;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gara Feroviară</title>
     <link rel="stylesheet" href="../assets/css/style.css"> 
+    <script src="/gara/assets/js/script.js"></script>
 </head>
 <body>
 <header>
