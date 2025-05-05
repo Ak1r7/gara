@@ -1,6 +1,26 @@
-RewriteEngine On
-RewriteBase /gara-feroviara/
-
-# Redirect to public folder
-RewriteRule ^$ public/index.php [L]
-RewriteRule ^(orar|rute|bilete|servicii|contact)$ public/$1.php [L]
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Protejate fișierele sensibile
+    <FilesMatch "(\.(env|log|htaccess)|database\.php)$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+    
+    # Redirect to remove trailing slash
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)/$ /$1 [L,R=301]
+    
+    # Front controller
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [QSA,L]
+    
+    # Protecție împotriva XSS
+    <IfModule mod_headers.c>
+        Header set X-XSS-Protection "1; mode=block"
+        Header always append X-Frame-Options SAMEORIGIN
+        Header set X-Content-Type-Options nosniff
+    </IfModule>
+</IfModule>
